@@ -20,17 +20,27 @@ To execute the program, type the following on the commandline:
 
 Upon successful output, you should see something similar like the below:
 ```
-TracingInterceptor.invoke with spanName=MyService$$EnhancerByGuice$$455191.doSomething MyService.doSomething.
-TracingInterceptor.invoke with spanName=MyService$$EnhancerByGuice$$455191.doSomething2
+Listening for transport dt_socket at address: 5005
+[otel.javaagent 2025-02-19 14:57:41:197 -0800] [main] INFO io.opentelemetry.javaagent.tooling.VersionLogger - opentelemetry-javaagent - version: 2.13.0
+[otel.javaagent 2025-02-19 14:57:43:454 -0800] [main] WARN io.opentelemetry.api.GlobalOpenTelemetry - You are currently using the OpenTelemetry Instrumentation Java Agent; all GlobalOpenTelemetry.set calls are ignored - the agent provides the global OpenTelemetry object used by your application.
+java.lang.Throwable
+	at io.opentelemetry.api.GlobalOpenTelemetry.set(GlobalOpenTelemetry.java:97)
+	at com.snaplogic.OpenTelemetryConfig.initOpenTelemetry(OpenTelemetryConfig.java:26)
+	at com.snaplogic.Main.main(Main.java:13)
+NotOnWeekendsModule: configure
+NotOnWeekendsModule: configure
+MyService.doSomething.
+WeekendBlocker: Interceptor invoked for method: doSomething2
+WeekendBlocker: Method invocation allowed on weekday: doSomething2
 MyService.doSomething2.
-TracingInterceptor.invoke with spanName=UserService$$EnhancerByGuice$$1987429.getUserDetails
-TracingInterceptor.invoke--span attr=user.id value=12345
+MyService.doSomething3.
+MyService.doSomething4.
 UserService.getUserDetails.. with span attributes
-TracingInterceptor.invoke with spanName=UserService$$EnhancerByGuice$$1987429.getStuff
 UserService.getStuff.
-TracingInterceptor.invoke with spanName=UserService$$EnhancerByGuice$$1987429.getUserDetails2
-TracingInterceptor.invoke--span attr=user.id2 value=123456789
+UserService.getStuff.
 UserService.getUserDetails2.. with span attributes
+Call annotation
+Done with user service
 ```
 
 Key points in the above output are as follows:
