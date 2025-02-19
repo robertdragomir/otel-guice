@@ -9,7 +9,12 @@ To build the program, type the following on the commandline. This will produce a
 ## To Run
 
 To execute the program, type the following on the commandline:
-> java -cp target/otel-poc-1.0-SNAPSHOT-jar-with-dependencies.jar com.snaplogic.Main
+> java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 \
+ -javaagent:otel-javaagent.jar \
+ -Dotel.exporter.otlp.endpoint=http://localhost:4317 \
+ -Dotel.exporter.otlp.protocol=grpc \
+ -Dotel.service.name=my-service \
+ -jar target/otel-guice-poc-1.0-SNAPSHOT-jar-with-dependencies.jar
 
 ## Expected Output
 
