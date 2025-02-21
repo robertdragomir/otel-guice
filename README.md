@@ -16,6 +16,10 @@ To execute the program, type the following on the commandline:
  -Dotel.service.name=my-service \
  -jar target/otel-guice-poc-1.0-SNAPSHOT-jar-with-dependencies.jar
 
+## Observations
+The OpenTelemetry collector is running in the background, collecting and exporting traces over the OTLP protocol to localhost:4317, which is where your OpenTelemetry Java agent is configured to send the trace data.
+You are using Jaeger to visualize the collected traces, which allows you to see detailed insights into the behavior and performance of your services as they interact.
+
 ## Expected Output
 
 Upon successful output, you should see something similar like the below:
