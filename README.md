@@ -9,8 +9,7 @@ To build the program, type the following on the commandline. This will produce a
 ## To Run
 
 To execute the program, type the following on the commandline:
-> java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005 \
- -javaagent:otel-javaagent.jar \
+> java -javaagent:otel-javaagent.jar \
  -Dotel.exporter.otlp.endpoint=http://localhost:4317 \
  -Dotel.exporter.otlp.protocol=grpc \
  -Dotel.service.name=my-service \
