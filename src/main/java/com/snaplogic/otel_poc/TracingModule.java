@@ -10,11 +10,15 @@ public class TracingModule extends AbstractModule {
     @Override
     protected void configure() {
 
-        System.out.println("NotOnWeekendsModule: configure");
+        System.out.println("TracingModule: configure");
         TracingInterceptor spanInterceptor = new TracingInterceptor();
         requestInjection(spanInterceptor);
+
+        // Bind interceptor to methods annotated with @Traced
         bindInterceptor(Matchers.any(), Matchers.annotatedWith(Traced.class),
                 spanInterceptor);
+
+        // Bind interceptor to methods annotated with @SpanAttributes
         bindInterceptor(Matchers.any(), Matchers.annotatedWith(SpanAttributes.class),
                 spanInterceptor);
 

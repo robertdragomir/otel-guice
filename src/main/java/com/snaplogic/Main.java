@@ -8,6 +8,10 @@ import com.snaplogic.otel_poc.TracingModule;
 import com.snaplogic.service.MyService;
 import com.snaplogic.service.UserService;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 public class Main {
     public static void main(String[] args) {
         OpenTelemetryConfig.initOpenTelemetry(); // Initialize OpenTelemetry
@@ -15,18 +19,30 @@ public class Main {
         Main main = new Main();
         Injector injector = main.initInjector();
 
-        // sample class with @Traced annotation at the class level
+        // MyService class demonstrates various tracing techniques
+        // including OpenTelemetry built-in annotations and custom Guice annotations.
         MyService myService = injector.getInstance(MyService.class);
         myService.doSomething();
         myService.doSomething2();
         myService.doSomething3();
         myService.doSomething4("Hi", 123);
 
-        // sample class with @Traced annotation at the class and method level (w/ attributes)
+        // UserService class demonstrates various tracing techniques
+        // including OpenTelemetry built-in annotations and custom Guice annotations.
         UserService userService = injector.getInstance(UserService.class);
         userService.getUserDetails();
         userService.getStuff();
-        userService.getUserDetails2();
+        // Create a supplier for attributes
+        Supplier<Map<String, Object>> attributeSupplier = () -> {
+            Map<String, Object> attributes = new HashMap<>();
+            attributes.put("userId", "123");
+            attributes.put("requestType", "GET");
+            attributes.put("payload", "Hello");
+            return attributes;
+        };
+
+        // Call getUserDetails2 with the attribute supplier
+        userService.getUserDetails2(attributeSupplier);
         main.callAnnotation();
         System.out.println("Done with user service");
     }

@@ -2,15 +2,16 @@ package com.snaplogic.otel_poc;
 
 import com.google.inject.Singleton;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-
-import java.lang.annotation.Annotation;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
+
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
 
 
 /**
@@ -23,36 +24,37 @@ public class TracingInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        // Get the method name and the annotations on the method
         String spanName = invocation.getMethod().getName();
-
-        // Start a new span
         Span span = tracer.spanBuilder(spanName).startSpan();
 
-        // Check for @SpanAttributes annotation and set attributes if present
-        Annotation[] annotations = invocation.getMethod().getAnnotations();
-        for (Annotation annotation : annotations) {
-            if (annotation instanceof SpanAttributes) {
-                SpanAttributes spanAttributes = (SpanAttributes) annotation;
-                String[] keyValue = spanAttributes.keyValue();
-                for (int i = 0; i < keyValue.length; i += 2) {
-                    String key = keyValue[i];
-                    String value = keyValue[i + 1];
-                    span.setAttribute(key, value);
-                }
+        // Extracting custom attributes from the SpanAttributes annotation
+        Supplier<Map<String, Object>> attributeSupplier =
+                extractAttributeSupplier(invocation.getArguments());
+
+        // If the method has SpanAttributes annotation, use it to set attributes
+        if (attributeSupplier != null) {
+            Map<String, Object> attributes = attributeSupplier.get();
+            for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+                span.setAttribute(entry.getKey(), entry.getValue().toString());
             }
         }
 
-        // Set the span in the context so that it can be tracked during the method execution
         try (Scope scope = span.makeCurrent()) {
-            // Proceed with the method execution
             return invocation.proceed();
-        } catch (Exception e) {
-            span.recordException(e);
-            throw e;
+        } catch (Throwable t) {
+            span.recordException(t);
+            throw t;
         } finally {
-            // End the span when method execution finishes
             span.end();
         }
+    }
+
+    private Supplier<Map<String, Object>> extractAttributeSupplier(Object[] arguments) {
+        for (Object arg : arguments) {
+            if (arg instanceof Supplier) {
+                return (Supplier<Map<String, Object>>) arg;
+            }
+        }
+        return () -> Map.of(); // Return an empty map if no supplier is found
     }
 }

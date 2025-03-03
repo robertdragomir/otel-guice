@@ -2,11 +2,16 @@ package com.snaplogic;
 
 
 import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 import io.opentelemetry.sdk.OpenTelemetrySdk;
 import io.opentelemetry.sdk.trace.SdkTracerProvider;
 import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
-import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter;
 
+
+/**
+ * OpenTelemetry configuration class.
+ * This class initializes the OpenTelemetry SDK with an OTLP exporter.
+ */
 public class OpenTelemetryConfig {
 
     public static void initOpenTelemetry() {
